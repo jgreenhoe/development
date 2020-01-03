@@ -2,6 +2,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "main.h"
 //void jjfunction(void);
 void numberGame(void);
@@ -15,9 +16,12 @@ void numberGame(void)
 {
   int n;
   int key;
+  int randNum;
+  srand(time(NULL));
   printf("this is a number game ");
   printf("where you have 5 chances to guess the right number.\n");
-  for (n=5; n>=1; n-=1)
+  randNum=rand()%10+'0'; 
+for (n=5; n>=1; n-=1)
   {
     if(n==1)
       printf("enter a number between 1 and 10. you have 1 guess left\n");
@@ -25,8 +29,7 @@ void numberGame(void)
       printf("enter a number between 1 and 10. you have %d guesses left\n", n);
     key=getchar();
     fflush(stdin);
-    printf("you entered the %c key ", key);
-    if (key=='4')
+    if (key==randNum)
     {
       printf("and you are right!");
       break;
@@ -34,4 +37,5 @@ void numberGame(void)
     else
       printf("and you are wrong! HA! HA! HA!\n");
   }
+  printf("the correct answer is %c!",randNum);
 }
