@@ -1,54 +1,37 @@
-//============================================================================
-// This is a comment
-//=============================================================================
 #include <cstdio>
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
 #include "main.h"
-void jjfunction(void);
+//void jjfunction(void);
 void numberGame(void);
 
-//-----------------------------------------------------------------------------
-// This is a comment
-// kdjfkdjfkd this is what I think
-//-----------------------------------------------------------------------------
 int main(void)
 {
   numberGame();
 }
-
-//-----------------------------------------------------------------------------
-// This is a function
-//-----------------------------------------------------------------------------
-void jjfunction(void)
-{
-  int j;
-  for(j=78; j>=-200  ; j-=20)
-  {
-    printf("k=%d  Hello Jonathan!!!\n", j);    
-    printf("this is a test.\n");
-    printf("hello everyone!!!!!!");
-  }
-}
-//-----------------------------------------------------------------------------
-// this is a number game
-//-----------------------------------------------------------------------------
+// this is a number game where you have 5 chances to guess the right number.
 void numberGame(void)
 {
-  int j;
+  int n;
   int key;
-  for (j=1; j<=5; j+=1)
+  printf("this is a number game ");
+  printf("where you have 5 chances to guess the right number.\n");
+  for (n=5; n>=1; n-=1)
   {
-    printf("enter a number between 1 and 10\n");
-   key=getchar();
-   fflush(stdin);
-   printf("you pressed the %c key\n", key);
-  if (key=='8'){ 
-  printf("you guessed right!");
-  break;
-  }  
-else
-  printf("HA! HA! HA! guess again\n");
-}
+    if(n==1)
+      printf("enter a number between 1 and 10. you have 1 guess left\n");
+    else
+      printf("enter a number between 1 and 10. you have %d guesses left\n", n);
+    key=getchar();
+    fflush(stdin);
+    printf("you entered the %c key ", key);
+    if (key=='4')
+    {
+      printf("and you are right!");
+      break;
+    }
+    else
+      printf("and you are wrong! HA! HA! HA!\n");
+  }
 }
