@@ -4,32 +4,29 @@
 #include <stdlib.h>
 #include <time.h>
 // this is a number game where you have 8 chances to guess the right number.
-void numberGame(void)
+void blackjack(void)
 {
   int n;
   int key;
   int randNum;
   int L;
-  char keystring[20];
   srand(time(NULL));
-  printf("this is a number game ");
-  printf("where you have 8 chances to guess the right number.\n");
+  printf("this is a blackjack game ");
+  printf("where you compete againsts the computer to get closest to 21.\n");
 for(L=1; L<=10&&n>1; L++)
   {
   printf("Level %d\n",L);
-  randNum=rand()%100;
-for (n=8; n>=1; n-=1)
+  randNum=rand()%10;
+  for (n=1; n>=1; n+=1)
   {
   if(n==1)
-    printf("enter a number between 0 and 99. you have 1 guess left\n");
+    printf("enter 'h' for hit me to draw a card.\n");
   else
-    printf("enter a number between 0 and 99. you have %d guesses left\n", n);
-  gets(keystring);
-  sscanf(keystring,"%d",&key);
-  printf("you entered the %d key and ",key);
-  if(key==randNum)
+    printf("enter 'h' for hit me to draw another card. enter 's' for stop to stop drawing\n\n", n);
+  key=getchar();
+  if(key=='h')
     {
-      printf("you are right!\n");
+      printf("you drew a %d card.\n",randNum);
       n=2;
       if(L>=10)
       printf("you won!");
