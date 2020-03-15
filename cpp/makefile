@@ -10,7 +10,7 @@ TARGET = jj
 #--------------------------------------
 # Files
 #--------------------------------------
-FILES_OBJ = main.o blackjack.o numberGame.o
+FILES_OBJ = main.o blackjack.o numberGame.o codeBreaker.o videoGame.o
 FILES_H   = main.h
 
 #--------------------------------------

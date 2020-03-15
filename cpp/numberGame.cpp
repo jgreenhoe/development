@@ -3,54 +3,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-// this is a number game where you have 8 chances to guess the right number.
 void numberGame(void)
 {
-  int n;
+  int n=2;
+  int i;
   int key;
+  int c;
   int randNum;
-  int L;
+  int L=1;
   char keystring[20];
   srand(time(NULL));
-  printf("this is a number game ");
-  printf("where you have 8 chances to guess the right number.\n");
-for(L=1; L<=10&&n>1; L++)
+  printf("secret number\npress i for instructions or c to continue.\n");
+  key=getchar();
+  fflush(stdin);
+  if(key=='i')
   {
-  printf("Level %d\n",L);
-  randNum=rand()%100;
-for (n=8; n>=1; n-=1)
+    printf("a secret number is chosen. you have 8 chances to guess what it is.\n");
+    key='c';
+  }
+  if(key=='c')
   {
-  if(n==1)
-    printf("enter a number between 0 and 99. you have 1 guess left\n");
-  else
-    printf("enter a number between 0 and 99. you have %d guesses left\n", n);
-  gets(keystring);
-  sscanf(keystring,"%d",&key);
-  printf("you entered the %d key and ",key);
-  if(key==randNum)
+    for(L=1; L<=10&&n>1; L++)
     {
-      printf("you are right!\n");
-      n=2;
-      if(L>=10)
-      printf("you won!");
-      break;
-    }
-    else
+      printf("Level %d\n",L);
+      randNum=rand()%100;
+      for (n=8; n>=1; n-=1)
       {
-      if(n!=1)
-      {
-      if(key>randNum)
-      printf("that is too high! Guess lower.");
-      if(key<randNum)
-      printf("that is too low!guess higher.");
-      }
-      if(n==1)
+        if(n==1)
+          printf("you have 1 more guess. try again.\n");
+        if(n==8)
+          printf("you have 8 guesses. enter a number between 0 and 99.\n");
+        if(n>1 && n<8)
+          printf("you have %d more guesses. try again.\n",n);
+        gets(keystring);
+        sscanf(keystring,"%d",&key);
+        printf("you entered the number %d and ",key);
+        if(key==randNum)
         {
-      printf("you are wrong.\nGame over\n");
-      break;
-      }
+          printf("you are correct!\n");
+          n=2;
+          if(L>=10)
+          printf("you won!");
+          break;
         }
-     }
+        else
+        {
+          if(n!=1)
+          {
+            if(key>randNum)
+            printf("that is too high! Guess lower.");
+            if(key<randNum)
+            printf("that is too low!guess higher.");
+          }
+          if(n==1)
+          {
+            printf("you are wrong.\nGame over\n");
+            break;
+          }
+        }
+      }
+    }
   }
     if(key!=randNum)
   printf("the correct answer is %d!",randNum);
