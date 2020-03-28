@@ -6,30 +6,23 @@
 #include <windows.h>
 
 
-void boxit(void);
-void seas(void);
-void greet(void);
-void fromwho(void);
-void del_msg(void);
+//void boxit(void);
+//void seas(void);
+//void greet(void);
+//void fromwho(void);
+//void del_msg(void);
 void jerase(int row,int col);
 void ball(int row, int col);
 
-#define FROMWHO "From Larry Bartz, Mark Hessling and William McBrine and Jonathan!"
+//#define FROMWHO "From Larry Bartz, Mark Hessling and William McBrine and Jonathan!"
 CHAR GetCh (VOID);
 
 int y_pos, x_pos;
 
-//WINDOW *treescrn, *treescrn2, *treescrn3, *treescrn4, *treescrn5,
-//       *treescrn6, *treescrn7, *treescrn8, *dotdeer0, *stardeer0,
-//       *lildeer0, *lildeer1, *lildeer2, *lildeer3, *middeer0,
-//       *middeer1, *middeer2, *middeer3, *bigdeer0, *bigdeer1,
-//       *bigdeer2, *bigdeer3, *bigdeer4, *lookdeer0, *lookdeer1,
-//       *lookdeer2, *lookdeer3, *lookdeer4, *w_holiday, *w_del_msg;
 WINDOW *treescrn2;
 
 int main(int argc, char **argv)
 {
-//    int loopy;
 
     initscr();
     nodelay(stdscr, TRUE);
@@ -41,34 +34,24 @@ int main(int argc, char **argv)
         start_color();
     curs_set(0);
 
-//    treescrn = newwin(16, 27, 3, 53);
-    treescrn2 = newwin(16, 27, 3, 53);
-//    treescrn3 = newwin(16, 27, 3, 53);
-
-//    w_holiday = newwin(1, 26, 3, 27);
-
-//    w_del_msg = newwin(1, 12, 23, 60);
-
-//    mvwaddstr(w_holiday, 0, 0, "bye bye!");
+    treescrn2 = newwin(0, 0, 0, 0);
 
     clear();
-//    werase(treescrn);
-//    touchwin(treescrn);
     refresh();
     napms(1000);
 
-    boxit();
-    del_msg();
-    napms(1000);
+//    boxit();
+//    del_msg();
+//    napms(1000);
 
     int key;
     int row=0;
     int col=12;
     int oldrow=row;
     int oldcol=col;
-    seas();
-    del_msg();
-    napms(1000);
+//    seas();
+//    del_msg();
+//    napms(1000);
     while(1)
     {
        key=GetCh();
@@ -146,10 +129,10 @@ void greet(void)
     mvaddch(19, 5, 'E');
 }
 
-void fromwho(void)
-{
-    mvaddstr(21, 13, FROMWHO);
-}
+//void fromwho(void)
+//{
+//    mvaddstr(21, 13, FROMWHO);
+//}
 
 void del_msg(void)
 {
