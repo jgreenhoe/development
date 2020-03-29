@@ -1,7 +1,3 @@
-/******************************************************************************/
-/*                                                                            */
-/******************************************************************************/
-
 #include <curses.h>
 #include <windows.h>
 void seas(void);
@@ -10,12 +6,11 @@ void del_msg(void);
 void jerase(int row,int col);
 void ball(int row, int col);
 
-
 CHAR GetCh (VOID);
 
 int y_pos, x_pos;
 
-WINDOW *treescrn2;
+WINDOW *screen;
 
 int main(int argc, char **argv)
 {
@@ -30,12 +25,11 @@ int main(int argc, char **argv)
         start_color();
     curs_set(0);
 
-    treescrn2 = newwin(0, 0, 0, 0);
+    screen = newwin(0, 0, 0, 0);
 
     clear();
     refresh();
     napms(1000);
-
 
     int key;
     int row=0;
@@ -48,9 +42,8 @@ int main(int argc, char **argv)
     napms(1000);
     while(1)
     {
+       key=0;
        key=GetCh();
-       fflush(stdin);
-
        oldrow=row;
        oldcol=col;
        switch(key)
@@ -59,7 +52,9 @@ int main(int argc, char **argv)
          case's': row+=2; break;
          case'd': col+=2; break;
          case'a': col-=2; break;
+         case'x': exit(0);
        }
+    printf("%c",key);
        jerase(oldrow,oldcol);
        ball(row,col);
     }
@@ -71,31 +66,13 @@ int main(int argc, char **argv)
 
 void ball(int row, int col)
 {
-    mvwaddch(treescrn2, row, col, (chtype) 'O');
-    wrefresh(treescrn2);
-//    wrefresh(w_del_msg);
+    mvwaddch(screen, row, col, (chtype) 'J');
+    wrefresh(screen);
 }
 void jerase(int row, int col)
 {
-    mvwaddch(treescrn2, row, col, (chtype) ' ');
-    wrefresh(treescrn2);
-//    wrefresh(w_del_msg);
-}
-
-void boxit(void)
-{
-    int x;
-
-    for (x = 0; x < 20; ++x)
-        mvaddch(x, 7, '|');
-
-    for (x = 0; x < 80; ++x)
-    {
-        if (x > 7)
-            mvaddch(19, x, '_');
-
-        mvaddch(22, x, '_');
-    }
+    mvwaddch(screen, row, col, (chtype) ' ');
+    wrefresh(screen);
 }
 
 void seas(void)
@@ -119,11 +96,6 @@ void greet(void)
     mvaddch(15, 3, 'm');
     mvaddch(19, 3, 'e');
 }
-
-//void fromwho(void)
-//{
-//    mvaddstr(21, 13, FROMWHO);
-//}
 
 void del_msg(void)
 {
