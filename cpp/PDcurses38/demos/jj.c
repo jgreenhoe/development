@@ -5,6 +5,8 @@ void greet(void);
 void del_msg(void);
 void plyrCntrl(void);
 void path(void);
+void arc(void);
+int cnvrt(int y);
 void jerase(int row,int col);
 void ball(int row, int col);
 
@@ -37,7 +39,7 @@ int main(int argc, char **argv)
     greet();
     del_msg();
     napms(1000);
-    path();
+    arc();
   
     napms(1000);
 
@@ -107,22 +109,52 @@ void plyrCntrl(void)
      ball(row,col);
   }
 }
+
 void path(void)
 {
-  int row=40;
+  int row=41;
   int col=0;
+  int l;
   int oldrow=row;
   int oldcol=col;
-  while(row<90)
+  for(l=0; l<40; l++)
   {
     oldrow=row;
     oldcol=col;
-    row-=2;
+    row-=1;
     col+=2;
-    napms(500);
+    napms(100);
     jerase(oldrow,oldcol);
     ball(row,col);
   }
+}
+
+void arc(void)
+{
+  int row=39;
+  int x;
+  int y;
+  int col=0;
+  int oldrow=row;
+  int oldcol=col;
+  for(x=col; x<100; x++)
+  {
+    oldrow=row;
+    oldcol=col;
+    col=x;
+    y=x-x*x*10/1000;
+    row=cnvrt(y);
+    napms(50);
+    jerase(oldrow,oldcol);
+    ball(row,col);
+  }
+}
+
+int cnvrt(int y)
+{
+int row;
+  row=39-y;
+return row;
 }
 // http://www.cplusplus.com/forum/articles/19975/
 CHAR GetCh (VOID)
