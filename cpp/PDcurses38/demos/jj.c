@@ -1,5 +1,6 @@
 #include <curses.h>
 #include <windows.h>
+#include <math.h>
 void seas(void);
 void greet(void);
 void del_msg(void);
@@ -134,6 +135,7 @@ void arc(void)
   int row=39;
   int x;
   int y;
+  int u=1;
   int col=0;
   int oldrow=row;
   int oldcol=col;
@@ -142,9 +144,9 @@ void arc(void)
     oldrow=row;
     oldcol=col;
     col=x;
-    y=x-x*x*10/1000;
+    y=x*tan(M_PI/4.0)-9.80665*x*x/(2*u*u*cos(M_PI/4.0))/500;
     row=cnvrt(y);
-    napms(50);
+    napms(100);
     jerase(oldrow,oldcol);
     ball(row,col);
   }
