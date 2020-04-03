@@ -8,13 +8,10 @@ void path(void);
 void arc(void);
 int cnvrt(int y);
 int drctn(int col);
-void enemy(void);
-void fireblt(void);
-void drpbmb(void);
 void spcInvdrs(void);
-void ball2(int row, int col);
+void enemy(int row, int col);
 void jerase(int row,int col);
-void ball(int row, int col);
+void plyr(int row, int col);
 
 CHAR GetCh (VOID);
 
@@ -55,9 +52,9 @@ int main(int argc, char **argv)
     return 0;
 
 }
-void ball(int row, int col)
+void plyr(int row, int col)
 {
-    mvwaddch(screen, row, col, (chtype) 'J');
+    mvwaddch(screen, row, col, (chtype) '^');
     wrefresh(screen);
 }
 
@@ -73,8 +70,10 @@ void bmb(int row4, int col4)
     wrefresh(screen);
 }
 
-void ball2(int row2, int col2)
+void enemy(int row2, int col2)
 {
+    mvwaddch(screen, row2, col2, (chtype) '#');
+    wrefresh(screen);
     mvwaddch(screen, row2, col2, (chtype) '#');
     wrefresh(screen);
 }
@@ -110,33 +109,34 @@ void del_msg(void)
 
 void spcInvdrs(void)
 {
-  int key;
   int row=39;
   int col=50;
-  int p=1;
-  int n=0;
-  int g=n;
   int oldrow=row;
   int oldcol=col;
   int row2=0;
-  int col2=99;
+  int col2=0;
   int oldrow2=row2;
   int oldcol2=col2;
   int row3=row;
   int col3=col;
+  int oldrow3=row3;
+  int oldcol3=col3;
+  int row4=row2;
+  int col4=col2;
+  int oldrow4=row4;
+  int oldcol4=col4;
+  int t=1;
+  int key;
+  int p=1;
+  int n=0;
+  int g=n;
   int r=0;
   int o=1;
   int r2=0;
   int o2=1;
-  int row4=row2;
-  int col4=col2;
-  int oldrow3=row3;
-  int oldcol3=col3;
-  int oldrow4=row4;
-  int oldcol4=col4;
-
   while(1)
   {
+    napms(75);
 //player tank----------------------------------------------------
      key=GetCh();
      oldrow=row;
@@ -148,10 +148,10 @@ void spcInvdrs(void)
        case'x': exit(0);
      }
      jerase(oldrow,oldcol);
-     ball(row,col);
+     plyr(row,col);
 //player bullet--------------------------------------------------
 
-if(key==' ')
+if(key==' ' && row3==row)
 {
   col3=col;
   o=r;
@@ -163,7 +163,6 @@ if(o==r)
   row3--;
   o=r;
   key=0;
-  napms(10);
   jerase(oldrow3,oldcol3);
   blt(row3,col3);
 }
@@ -178,49 +177,62 @@ exit(0);
 //enemy----------------------------------------------------------
     oldrow2=row2;
     oldcol2=col2;
-    if(col2==99 || g==n)
-    {
-        oldrow2=row2;
-        oldcol2=col2;
-        col2--;
-        g=n;
-        napms(50);
-        jerase(oldrow2,oldcol2);
-        ball2(row2,col2);
-    }
     if(col2==0 || g==p)
     {
-        oldrow2=row2;
-        oldcol2=col2;
-        col2++;
-        g=p;
-        napms(50);
-        jerase(oldrow2,oldcol2);
-        ball2(row2,col2);
+      oldrow2=row2;
+      oldcol2=col2;
+      col2++;
+      g=p;
+      jerase(oldrow2,oldcol2);
+      enemy(row2,col2);
     }
+    oldrow2=row2;
+    oldcol2=col2;
+    if(col2==99)
+    {
+      row2++;
+      jerase(oldrow2, oldcol2);
+      enemy(row2,col2);
+      
+    }
+    if(col2==99 || g==n)
+    {
+      oldrow2=row2;
+      oldcol2=col2;
+      col2--;
+      g=n;
+      jerase(oldrow2,oldcol2);
+      enemy(row2,col2);
+    }
+
 //enemy bomb-----------------------------------------------------
 
-col4=col2;
-o2=r2;
+if(t==1)
+{
+  col4=col2;
+  o2=r2;
+}
   oldrow4=row4;
   oldcol4=col4;
+  t=0;
 if(o2==r2)
 {
 
   row4++;
   o2=r2;
-  napms(10);
   jerase(oldrow4,oldcol4);
   bmb(row4,col4);
 }
 if(row4>39)
 {
+  t=1;
   row4=row2;
   col4=col2;
   o2=1;
 }
 if(row4==row && col4==col)
 exit(0);
+//------------------------------------------------------------------------------
   }
 }
 
@@ -243,7 +255,7 @@ void plyrCntrl(void)
        case'x': exit(0);
      }
      jerase(oldrow,oldcol);
-     ball(row,col);
+     plyr(row,col);
   }
 }
 
@@ -262,7 +274,7 @@ void path(void)
     col+=2;
     napms(100);
     jerase(oldrow,oldcol);
-    ball(row,col);
+    plyr(row,col);
   }
 }
 
@@ -284,7 +296,7 @@ void arc(void)
     row=cnvrt(y);
     napms(100);
     jerase(oldrow,oldcol);
-    ball(row,col);
+    plyr(row,col);
   }
 }
 
@@ -295,77 +307,6 @@ int row;
 return row;
 }
 
-void enemy(void)
-{
-  int row=0;
-  int col=99;
-  int oldrow=row;
-  int oldcol=col;
-  while(1)
-  {
-    oldrow=row;
-    oldcol=col;
-    if(col==99)
-    {
-      while(col!=0)
-      {
-        oldrow=row;
-        oldcol=col;
-        col--;
-        napms(10);
-        jerase(oldrow,oldcol);
-        ball2(row,col);
-      }
-    }
-    if(col==0)
-    {
-      while(col!=99)
-      {
-        oldrow=row;
-        oldcol=col;
-        col++;
-        napms(10);
-        jerase(oldrow,oldcol);
-        ball2(row,col);
-      }
-    }
-  }
-}
-void fireblt(void)
-{
-  int row=39;
-  int col=0;
-  int l;
-  int oldrow=row;
-  int oldcol=col;
-  for(l=0; l<40; l++)
-  {
-    oldrow=row;
-    oldcol=col;
-    row-=1;
-    napms(100);
-    jerase(oldrow,oldcol);
-    ball(row,col);
-  }
-}
-
-void drpbmb(void)
-{
-  int row=0;
-  int col=0;
-  int l;
-  int oldrow=row;
-  int oldcol=col;
-  for(l=0; l<40; l++)
-  {
-    oldrow=row;
-    oldcol=col;
-    row+=1;
-    napms(100);
-    jerase(oldrow,oldcol);
-    ball(row,col);
-  }
-}
 // http://www.cplusplus.com/forum/articles/19975/  with modification
 CHAR GetCh (VOID)
 {
