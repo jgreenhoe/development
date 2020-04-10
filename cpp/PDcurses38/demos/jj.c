@@ -9,16 +9,28 @@ void arc(void);
 int cnvrt(int y);
 int drctn(int col);
 void spcInvdrs(void);
-void enemy(int row, int col);
+int invdrs(char c, int *Row,int *Col, int g);
+void drpbmb(void);
+void enemy(char c, int row, int col);
 void jerase(int row,int col);
 void plyr(int row, int col);
 
 CHAR GetCh (VOID);
 
-int y_pos, x_pos;
+//int y_pos, x_pos;
 
 WINDOW *screen;
-
+int pstn[5][3] = {
+ {0, 0, 1, '0'}, // spaceship 0
+ {0, 2, 1, '1'}, // spaceship 1
+ {0, 4, 1, '2'}, // spaceship 2
+ {0, 6, 1, '3'}, // spaceship 3
+ {0, 8, 1, '4'}, // spaceship 4
+//|  |  |   |_ spaceship design
+//|  |  |_____ g=1==>forward g=0==>backwards
+//|  |________ column
+//|___________ row
+};
 
 int main(int argc, char **argv)
 {
@@ -70,11 +82,9 @@ void bmb(int row4, int col4)
     wrefresh(screen);
 }
 
-void enemy(int row2, int col2)
+void enemy(char c, int row2, int col2)
 {
-    mvwaddch(screen, row2, col2, (chtype) '#');
-    wrefresh(screen);
-    mvwaddch(screen, row2, col2, (chtype) '#');
+    mvwaddch(screen, row2, col2, (chtype) c);
     wrefresh(screen);
 }
 
@@ -109,31 +119,32 @@ void del_msg(void)
 
 void spcInvdrs(void)
 {
-  int row=39;
-  int col=50;
-  int oldrow=row;
-  int oldcol=col;
-  int row2=0;
-  int col2=0;
-  int oldrow2=row2;
-  int oldcol2=col2;
-  int row3=row;
-  int col3=col;
-  int oldrow3=row3;
-  int oldcol3=col3;
-  int row4=row2;
-  int col4=col2;
-  int oldrow4=row4;
-  int oldcol4=col4;
+  int row=39, col=50;
+  int row2=0, col2=0;
+  int row3=row, col3=col;
+  int row4=row, col4=col2;
+  int row5=0, col5=1;
+  int row6=0, col6=3;
+  int row7=0, col7=5;
+  int row8=0, col8=4;
+  int row9=0, col9=5;
+  int row10=0, col10=6;
+  int oldrow=row, oldcol=col;
+  int oldrow2=row2, oldcol2=col2;
+  int oldrow3=row3, oldcol3=col3;
+  int oldrow4=row4, oldcol4=col4;
+  int oldrow5=row5, oldcol5=col5;
+  int oldrow6=row6, oldcol6=col6;
   int t=1;
   int key;
-  int p=1;
-  int n=0;
-  int g=n;
   int r=0;
   int o=1;
   int r2=0;
   int o2=1;
+  int *Row;
+  int *Col;
+  int g=1;
+  int y;
   while(1)
   {
     napms(75);
@@ -172,66 +183,14 @@ if(row3<0)
   col3=col;
   o=1;
 }
-if(row2==row3 && col2==col3)
-exit(0);
 //enemy----------------------------------------------------------
-    oldrow2=row2;
-    oldcol2=col2;
-    if(col2==0 || g==p)
-    {
-      oldrow2=row2;
-      oldcol2=col2;
-      col2++;
-      g=p;
-      jerase(oldrow2,oldcol2);
-      enemy(row2,col2);
-    }
-    oldrow2=row2;
-    oldcol2=col2;
-    if(col2==99)
-    {
-      row2++;
-      jerase(oldrow2, oldcol2);
-      enemy(row2,col2);
-      
-    }
-    if(col2==99 || g==n)
-    {
-      oldrow2=row2;
-      oldcol2=col2;
-      col2--;
-      g=n;
-      jerase(oldrow2,oldcol2);
-      enemy(row2,col2);
-    }
-
+g=invdrs('1', &row5,&col5,g);
+g=invdrs('2', &row5,&col6,g);
+g=invdrs('3', &row5,&col7,g);
 //enemy bomb-----------------------------------------------------
-
-if(t==1)
-{
-  col4=col2;
-  o2=r2;
-}
-  oldrow4=row4;
-  oldcol4=col4;
-  t=0;
-if(o2==r2)
-{
-
-  row4++;
-  o2=r2;
-  jerase(oldrow4,oldcol4);
-  bmb(row4,col4);
-}
-if(row4>39)
-{
-  t=1;
-  row4=row2;
-  col4=col2;
-  o2=1;
-}
-if(row4==row && col4==col)
-exit(0);
+//drpbmb(row5,col5);
+//drpbmb(row6,col6);
+//drpbmb(row7,col7);
 //------------------------------------------------------------------------------
   }
 }
@@ -307,6 +266,59 @@ int row;
 return row;
 }
 
+int invdrs(char c, int *Row,int *Col, int g)
+{
+  int row=*Row;
+  int col=*Col;
+  jerase(row,col);
+    if(col==0) row++;
+    if(col==0 || g==1)
+    {
+      col++;
+      g=1;
+    }
+     if(col==99) row++;
+    if(col==99 || g==0)
+    {
+      col--;
+      g=0;
+    }
+    *Row=row;
+    *Col=col;
+    enemy(c, row,col);
+    return g;
+}
+//void drpbmb(void)
+//{
+//  int r2=0;
+//  int o2=1;
+//  int t=1;
+//  if(t==1)
+//  {
+//    col4=col2;
+//    o2=r2;
+//  }
+//    oldrow4=row4;
+//    oldcol4=col4;
+//    t=0;
+//  if(o2==r2)
+//  {
+//
+//    row4++;
+//    o2=r2;
+//    jerase(oldrow4,oldcol4);
+//    bmb(row4,col4);
+//  }
+//  if(row4>39)
+//  {
+//    t=1;
+//    row4=row2;
+//    col4=col2;
+//    o2=1;
+//  }
+//if(row4==row && col4==col)
+//exit(0);
+//}
 // http://www.cplusplus.com/forum/articles/19975/  with modification
 CHAR GetCh (VOID)
 {
