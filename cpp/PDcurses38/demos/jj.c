@@ -9,18 +9,19 @@ void arc(void);
 int cnvrt(int y);
 int drctn(int col);
 void spcInvdrs(void);
-int invdrs(char c, int *Row,int *Col, int g);
+void invdrs(void);
 void drpbmb(void);
-void enemy(char c, int row, int col);
+void enemy(int n);
 void jerase(int row,int col);
 void plyr(int row, int col);
 
 CHAR GetCh (VOID);
+enum spaceships {ROW,COL,DIR,NAME};
 
 //int y_pos, x_pos;
 
 WINDOW *screen;
-int pstn[5][3] = {
+int pstn[5][4] = {
  {0, 0, 1, '0'}, // spaceship 0
  {0, 2, 1, '1'}, // spaceship 1
  {0, 4, 1, '2'}, // spaceship 2
@@ -76,21 +77,26 @@ void blt(int row3, int col3)
     wrefresh(screen);
 }
 
-void bmb(int row4, int col4)
-{
-    mvwaddch(screen, row4, col4, (chtype) '0');
-    wrefresh(screen);
-}
+//void bmb(int row4, int col4)
+//{
+//    mvwaddch(screen, row4, col4, (chtype) '0');
+//    wrefresh(screen);
+//}
 
-void enemy(char c, int row2, int col2)
+void enemy(int n)
 {
-    mvwaddch(screen, row2, col2, (chtype) c);
+    mvwaddch(screen, pstn[n][0], pstn[n][1], pstn[n][NAME]);
     wrefresh(screen);
 }
 
 void jerase(int row, int col)
 {
     mvwaddch(screen, row, col, (chtype) ' ');
+    wrefresh(screen);
+}
+void eerase(int n)
+{
+    mvwaddch(screen, pstn[n][0], pstn[n][1], (chtype) ' ');
     wrefresh(screen);
 }
 
@@ -120,31 +126,15 @@ void del_msg(void)
 void spcInvdrs(void)
 {
   int row=39, col=50;
-  int row2=0, col2=0;
   int row3=row, col3=col;
-  int row4=row, col4=col2;
-  int row5=0, col5=1;
-  int row6=0, col6=3;
-  int row7=0, col7=5;
-  int row8=0, col8=4;
-  int row9=0, col9=5;
-  int row10=0, col10=6;
   int oldrow=row, oldcol=col;
-  int oldrow2=row2, oldcol2=col2;
   int oldrow3=row3, oldcol3=col3;
-  int oldrow4=row4, oldcol4=col4;
-  int oldrow5=row5, oldcol5=col5;
-  int oldrow6=row6, oldcol6=col6;
   int t=1;
   int key;
   int r=0;
   int o=1;
   int r2=0;
   int o2=1;
-  int *Row;
-  int *Col;
-  int g=1;
-  int y;
   while(1)
   {
     napms(75);
@@ -184,9 +174,7 @@ if(row3<0)
   o=1;
 }
 //enemy----------------------------------------------------------
-g=invdrs('1', &row5,&col5,g);
-g=invdrs('2', &row5,&col6,g);
-g=invdrs('3', &row5,&col7,g);
+invdrs();
 //enemy bomb-----------------------------------------------------
 //drpbmb(row5,col5);
 //drpbmb(row6,col6);
@@ -266,27 +254,46 @@ int row;
 return row;
 }
 
-int invdrs(char c, int *Row,int *Col, int g)
+void invdrs(void)
 {
-  int row=*Row;
-  int col=*Col;
-  jerase(row,col);
-    if(col==0) row++;
-    if(col==0 || g==1)
+
+  eerase(0);
+  eerase(1);
+  eerase(2);
+      if(pstn[0][COL]==0)
+      {
+        pstn[0][ROW]++;
+        pstn[1][ROW]++;
+        pstn[2][ROW]++;
+      }
+      if(pstn[0][COL]==0 || pstn[0][DIR]==1)
+      {
+        pstn[0][COL]++;
+        pstn[1][COL]++;
+        pstn[2][COL]++;
+        pstn[0][DIR]=1;
+        pstn[1][DIR]=1;
+        pstn[2][DIR]=1;
+      }
+     if(pstn[2][COL]==99)
+     {
+       pstn[0][ROW]++;
+       pstn[1][ROW]++;
+       pstn[2][ROW]++;
+     }
+
+    if(pstn[2][COL]==99 || pstn[2][DIR]==0)
     {
-      col++;
-      g=1;
+      pstn[0][COL]--;
+      pstn[1][COL]--;
+      pstn[2][COL]--;
+      pstn[0][DIR]=0;
+      pstn[1][DIR]=0;
+      pstn[2][DIR]=0;
     }
-     if(col==99) row++;
-    if(col==99 || g==0)
-    {
-      col--;
-      g=0;
-    }
-    *Row=row;
-    *Col=col;
-    enemy(c, row,col);
-    return g;
+    enemy(0);
+    enemy(1);
+    enemy(2);
 }
 //void drpbmb(void)
 //{
