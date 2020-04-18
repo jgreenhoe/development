@@ -1,6 +1,7 @@
 #include <curses.h>
 #include <windows.h>
 #include <math.h>
+#include <time.h>
 void intro(void);
 void del_msg(void);
 void plyrCntrl(void);
@@ -11,26 +12,45 @@ int drctn(int col);
 void spcInvdrs(void);
 void invdrs(void);
 void drpbmb(void);
+void bmb(int n);
 void enemy(int n);
 void jerase(int row,int col);
 void plyr(int row, int col);
 
 CHAR GetCh (VOID);
-enum spaceships {ROW,COL,DIR,NAME};
-
-//int y_pos, x_pos;
+enum spaceships {ROW,COL,STATE,APRNCE,LIFE};
 
 WINDOW *screen;
-int pstn[5][4] = {
- {0, 0, 1, '0'}, // spaceship 0
- {0, 2, 1, '1'}, // spaceship 1
- {0, 4, 1, '2'}, // spaceship 2
- {0, 6, 1, '3'}, // spaceship 3
- {0, 8, 1, '4'}, // spaceship 4
-//|  |  |   |_ spaceship design
-//|  |  |_____ g=1==>forward g=0==>backwards
+int pstn[5][5] = {
+ {0, 1, 1, '0', 1}, // spaceship 0
+ {0, 3, 1, '1', 1}, // spaceship 1
+ {0, 5, 1, '2', 1}, // spaceship 2
+ {0, 7, 1, '3', 1}, // spaceship 3
+ {0, 9, 1, '4', 1}, // spaceship 4
+//              |_ alive=1 dead=0
+//|  |  |   |_____ spaceship aperance
+//|  |  |_________ g=1==>forward g=0==>backwards
+//|  |____________ column
+//|_______________ row
+};
+
+int bmbpstn[5][3] = {
+ {0, 0, 0}, // bomb 0
+ {0, 2, 0}, // bomb 1
+ {0, 4, 0}, // bomb 2
+ {0, 6, 0}, // bomb 3
+ {0, 8, 0}, // bomb 4
+//|  |   |_____ ready to drop=0, in action=1
 //|  |________ column
 //|___________ row
+};
+
+int randvrb[5][1] = {
+ {0}, // random variable 0
+ {0}, // random variable 1
+ {0}, // random variable 2
+ {0}, // random variable 3
+ {0}, // random variable 4
 };
 
 int main(int argc, char **argv)
@@ -77,15 +97,15 @@ void blt(int row3, int col3)
     wrefresh(screen);
 }
 
-//void bmb(int row4, int col4)
-//{
-//    mvwaddch(screen, row4, col4, (chtype) '0');
-//    wrefresh(screen);
-//}
+void bmb(int n)
+{
+    mvwaddch(screen, bmbpstn[n][0], bmbpstn[n][1], (chtype)'#');
+    wrefresh(screen);
+}
 
 void enemy(int n)
 {
-    mvwaddch(screen, pstn[n][0], pstn[n][1], pstn[n][NAME]);
+    mvwaddch(screen, pstn[n][0], pstn[n][1], pstn[n][APRNCE]);
     wrefresh(screen);
 }
 
@@ -99,23 +119,26 @@ void eerase(int n)
     mvwaddch(screen, pstn[n][0], pstn[n][1], (chtype) ' ');
     wrefresh(screen);
 }
-
+void berase(int n)
+{
+    mvwaddch(screen, bmbpstn[n][0], bmbpstn[n][1], (chtype) ' ');
+    wrefresh(screen);
+}
 void intro(void)
 {
-    mvaddch( 4, 1, 'J');
-    mvaddch( 6, 1, 'o');
-    mvaddch( 8, 1, 'n');
+    mvaddch( 6, 1, 'S');
+    mvaddch( 8, 1, 'p');
     mvaddch(10, 1, 'a');
-    mvaddch(12, 1, 't');
-    mvaddch(14, 1, 'h');
-    mvaddch(16, 1, 'a');
-    mvaddch(18, 1, 'n');
-    mvaddch(20, 1, '\'');
-    mvaddch(22, 1, 's');
-    mvaddch( 7, 3, 'G');
-    mvaddch(11, 3, 'a');
-    mvaddch(15, 3, 'm');
-    mvaddch(19, 3, 'e');
+    mvaddch(12, 1, 'c');
+    mvaddch(14, 1, 'e');
+    mvaddch( 4, 3, 'i');
+    mvaddch( 6, 3, 'n');
+    mvaddch( 8, 3, 'v');
+    mvaddch(10, 3, 'a');
+    mvaddch(12, 3, 'd');
+    mvaddch(14, 3, 'e');
+    mvaddch(16, 3, 'r');
+    mvaddch(18, 3, 's');
 }
 
 void del_msg(void)
@@ -129,19 +152,20 @@ void spcInvdrs(void)
   int row3=row, col3=col;
   int oldrow=row, oldcol=col;
   int oldrow3=row3, oldcol3=col3;
-  int t=1;
   int key;
   int r=0;
   int o=1;
-  int r2=0;
-  int o2=1;
+
+srand(time(NULL));
+
   while(1)
   {
-    napms(75);
+    napms(55);
 //player tank----------------------------------------------------
      key=GetCh();
      oldrow=row;
      oldcol=col;
+     int e;
      switch(key)
      {
        case'd': col+=1; break;
@@ -150,7 +174,22 @@ void spcInvdrs(void)
      }
      jerase(oldrow,oldcol);
      plyr(row,col);
+  for( e=0; e<5; e++)
+  {
+    if(row==bmbpstn[e][ROW] && col==bmbpstn[e][COL])
+       exit(0);
+  }
 //player bullet--------------------------------------------------
+for(e=0; e<5; e++)
+{
+  if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
+  {
+    pstn[e][LIFE]=0;
+    row3=row;
+    col3=col;
+    o=1;
+  }
+}
 
 if(key==' ' && row3==row)
 {
@@ -173,13 +212,21 @@ if(row3<0)
   col3=col;
   o=1;
 }
+for(e=0; e<5; e++)
+{
+  if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
+  {
+    pstn[e][LIFE]=0;
+    row3=row;
+    col3=col;
+    o=1;
+  }
+}
 //enemy----------------------------------------------------------
 invdrs();
 //enemy bomb-----------------------------------------------------
-//drpbmb(row5,col5);
-//drpbmb(row6,col6);
-//drpbmb(row7,col7);
-//------------------------------------------------------------------------------
+drpbmb();
+//---------------------------------------------------------------
   }
 }
 
@@ -256,77 +303,87 @@ return row;
 
 void invdrs(void)
 {
+  int e;
+  int l=0;
 
-  eerase(0);
-  eerase(1);
-  eerase(2);
-      if(pstn[0][COL]==0)
-      {
-        pstn[0][ROW]++;
-        pstn[1][ROW]++;
-        pstn[2][ROW]++;
-      }
-      if(pstn[0][COL]==0 || pstn[0][DIR]==1)
-      {
-        pstn[0][COL]++;
-        pstn[1][COL]++;
-        pstn[2][COL]++;
-        pstn[0][DIR]=1;
-        pstn[1][DIR]=1;
-        pstn[2][DIR]=1;
-      }
-     if(pstn[2][COL]==99)
-     {
-       pstn[0][ROW]++;
-       pstn[1][ROW]++;
-       pstn[2][ROW]++;
-     }
+  for(e=0; e<5; e++)
+    eerase(e);
 
-    if(pstn[2][COL]==99 || pstn[2][DIR]==0)
+  for(e=0; e<5; e++)
+  {
+    if(pstn[e][COL]==0 || l==1)
     {
-      pstn[0][COL]--;
-      pstn[1][COL]--;
-      pstn[2][COL]--;
-      pstn[0][DIR]=0;
-      pstn[1][DIR]=0;
-      pstn[2][DIR]=0;
+      pstn[e][ROW]++;
+      l=1;
     }
-    enemy(0);
-    enemy(1);
-    enemy(2);
+  }
+  for(e=0; e<5; e++)
+  {
+    if(pstn[e][COL]==0 || pstn[e][STATE]==1)
+    {
+      pstn[e][COL]++;
+      pstn[e][STATE]=1;
+    }
+  }
+  for(e=4; e>-1; e--)
+  {
+    if(pstn[e][COL]==99 || l==1)
+    {
+      pstn[e][ROW]++;
+      l=1;
+    }
+  }
+
+  for(e=0; e<5; e++)
+  {
+    if(pstn[e][COL]==99 || pstn[e][STATE]==0)
+    {
+      pstn[e][COL]--;
+      pstn[e][STATE]=0;
+    }
+
+  }
+  for(e=0; e<5; e++)
+  {
+    if(pstn[e][LIFE]==1)
+      enemy(e);
+  }
 }
-//void drpbmb(void)
-//{
-//  int r2=0;
-//  int o2=1;
-//  int t=1;
-//  if(t==1)
-//  {
-//    col4=col2;
-//    o2=r2;
-//  }
-//    oldrow4=row4;
-//    oldcol4=col4;
-//    t=0;
-//  if(o2==r2)
-//  {
-//
-//    row4++;
-//    o2=r2;
-//    jerase(oldrow4,oldcol4);
-//    bmb(row4,col4);
-//  }
-//  if(row4>39)
-//  {
-//    t=1;
-//    row4=row2;
-//    col4=col2;
-//    o2=1;
-//  }
-//if(row4==row && col4==col)
-//exit(0);
-//}
-// http://www.cplusplus.com/forum/articles/19975/  with modification
+void drpbmb(void)
+{
+  int e;
+
+  for(e=0; e<5; e++)
+    berase(e);
+
+  for(e=0; e<5; e++)
+  {
+    if(bmbpstn[e][STATE]==0 && pstn[e][LIFE]==1)
+    {
+      randvrb[e][0]=rand()%20;
+      bmbpstn[e][ROW]=pstn[e][ROW];
+      bmbpstn[e][COL]=pstn[e][COL];
+    }
+  }
+
+  for(e=0; e<5; e++)
+  {
+    if(randvrb[e][0]==0)
+      bmbpstn[e][STATE]=1;
+  }
+
+  for(e=0; e<5; e++)
+  {
+  if(bmbpstn[e][STATE]==1)
+    {
+      bmbpstn[e][ROW]++;
+      if(bmbpstn[e][ROW]>39)
+        bmbpstn[e][STATE]=0;
+      bmb(e);
+    }
+  }
+}
+//http: www.cplusplus.com/forum/articles/19975/  with modification
 CHAR GetCh (VOID)
 {
   HANDLE hStdin = GetStdHandle (STD_INPUT_HANDLE);
