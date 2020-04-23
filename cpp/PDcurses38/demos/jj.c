@@ -18,41 +18,137 @@ void jerase(int row,int col);
 void plyr(int row, int col);
 
 CHAR GetCh (VOID);
-enum spaceships {ROW,COL,STATE,APRNCE,LIFE};
+enum spaceships {ROW,COL,STATE,APRNCE,LIFE,M};
 
 WINDOW *screen;
-int pstn[5][5] = {
- {0, 1, 1, '0', 1}, // spaceship 0
- {0, 3, 1, '1', 1}, // spaceship 1
- {0, 5, 1, '2', 1}, // spaceship 2
- {0, 7, 1, '3', 1}, // spaceship 3
- {0, 9, 1, '4', 1}, // spaceship 4
-//              |_ alive=1 dead=0
-//|  |  |   |_____ spaceship aperance
-//|  |  |_________ g=1==>forward g=0==>backwards
-//|  |____________ column
-//|_______________ row
+int pstn[55][6] = {
+ {0, 1, 1, '&', 1, 0}, // spaceship 0
+ {0, 6, 1, '&', 1, 0}, // spaceship 1
+ {0,11, 1, '&', 1, 0}, // spaceship 2
+ {0,16, 1, '&', 1, 0}, // spaceship 3
+ {0,21, 1, '&', 1, 0}, // spaceship 4
+ {0,26, 1, '&', 1, 0}, // spaceship 6
+ {0,31, 1, '&', 1, 0}, // spaceship 7
+ {0,36, 1, '&', 1, 0}, // spaceship 8
+ {0,41, 1, '&', 1, 0}, // spaceship 9
+ {0,46, 1, '&', 1, 0}, // spaceship 10
+ {0,51, 1, '&', 1, 0}, // spaceship 11
+ {2, 1, 1, '$', 1, 0}, // spaceship 12
+ {2, 6, 1, '$', 1, 0}, // spaceship 13
+ {2,11, 1, '$', 1, 0}, // spaceship 14
+ {2,16, 1, '$', 1, 0}, // spaceship 15
+ {2,21, 1, '$', 1, 0}, // spaceship 16
+ {2,26, 1, '$', 1, 0}, // spaceship 17
+ {2,31, 1, '$', 1, 0}, // spaceship 18
+ {2,36, 1, '$', 1, 0}, // spaceship 19
+ {2,41, 1, '$', 1, 0}, // spaceship 20
+ {2,46, 1, '$', 1, 0}, // spaceship 21
+ {2,51, 1, '$', 1, 0}, // spaceship 22
+ {4, 1, 1, '%', 1, 0}, // spaceship 23
+ {4, 6, 1, '%', 1, 0}, // spaceship 24
+ {4,11, 1, '%', 1, 0}, // spaceship 25
+ {4,16, 1, '%', 1, 0}, // spaceship 26
+ {4,21, 1, '%', 1, 0}, // spaceship 27
+ {4,26, 1, '%', 1, 0}, // spaceship 28
+ {4,31, 1, '%', 1, 0}, // spaceship 29
+ {4,36, 1, '%', 1, 0}, // spaceship 30
+ {4,41, 1, '%', 1, 0}, // spaceship 31
+ {4,46, 1, '%', 1, 0}, // spaceship 32
+ {4,51, 1, '%', 1, 0}, // spaceship 33
+ {6, 1, 1, '@', 1, 0}, // spaceship 34
+ {6, 6, 1, '@', 1, 0}, // spaceship 35
+ {6,11, 1, '@', 1, 0}, // spaceship 36
+ {6,16, 1, '@', 1, 0}, // spaceship 37
+ {6,21, 1, '@', 1, 0}, // spaceship 38
+ {6,26, 1, '@', 1, 0}, // spaceship 39
+ {6,31, 1, '@', 1, 0}, // spaceship 40
+ {6,36, 1, '@', 1, 0}, // spaceship 41
+ {6,41, 1, '@', 1, 0}, // spaceship 42
+ {6,46, 1, '@', 1, 0}, // spaceship 43
+ {6,51, 1, '@', 1, 0}, // spaceship 44
+ {8, 1, 1, '?', 1, 0}, // spaceship 45
+ {8, 6, 1, '=', 1, 0}, // spaceship 46
+ {8,11, 1, '=', 1, 0}, // spaceship 47
+ {8,16, 1, '=', 1, 0}, // spaceship 48
+ {8,21, 1, '=', 1, 0}, // spaceship 49
+ {8,26, 1, '=', 1, 0}, // spaceship 50
+ {8,31, 1, '=', 1, 0}, // spaceship 51
+ {8,36, 1, '=', 1, 0}, // spaceship 52
+ {8,41, 1, '=', 1, 0}, // spaceship 53
+ {8,46, 1, '=', 1, 0}, // spaceship 54
+ {8,51, 1, '=', 1, 0}, // spaceship 55
+//|  |  |   |   |  |_m variable
+//|  |  |   |   |____alive=1 dead=0
+//|  |  |   |________spaceship aperance
+//|  |  |____________g=1==>forward g=0==>backwards
+//|  |_______________column
+//|__________________row
 };
 
-int bmbpstn[5][3] = {
- {0, 0, 0}, // bomb 0
- {0, 2, 0}, // bomb 1
- {0, 4, 0}, // bomb 2
- {0, 6, 0}, // bomb 3
- {0, 8, 0}, // bomb 4
-//|  |   |_____ ready to drop=0, in action=1
+int bmbpstn[55][4] = {
+ {0, 1, 0, 0}, // bomb 0
+ {0, 6, 0, 0}, // bomb 1
+ {0,11, 0, 0}, // bomb 2
+ {0,16, 0, 0}, // bomb 3
+ {0,21, 0, 0}, // bomb 4
+ {0,26, 0, 0}, // bomb 5
+ {0,31, 0, 0}, // bomb 6
+ {0,36, 0, 0}, // bomb 7
+ {0,41, 0, 0}, // bomb 8
+ {0,46, 0, 0}, // bomb 9
+ {0,51, 0, 0}, // bomb 10
+ {2, 1, 0, 0}, // bomb 12
+ {2, 6, 0, 0}, // bomb 13
+ {2,11, 0, 0}, // bomb 14
+ {2,16, 0, 0}, // bomb 15
+ {2,21, 0, 0}, // bomb 16
+ {2,26, 0, 0}, // bomb 17
+ {2,31, 0, 0}, // bomb 18
+ {2,36, 0, 0}, // bomb 19
+ {2,41, 0, 0}, // bomb 20
+ {2,46, 0, 0}, // bomb 21
+ {2,51, 0, 0}, // bomb 22
+ {4, 1, 0, 0}, // bomb 23
+ {4, 6, 0, 0}, // bomb 24
+ {4,11, 0, 0}, // bomb 25
+ {4,16, 0, 0}, // bomb 26
+ {4,21, 0, 0}, // bomb 27
+ {4,26, 0, 0}, // bomb 28
+ {4,31, 0, 0}, // bomb 29
+ {4,36, 0, 0}, // bomb 30
+ {4,41, 0, 0}, // bomb 31
+ {4,46, 0, 0}, // bomb 32
+ {4,51, 0, 0}, // bomb 33
+ {6, 1, 0, 0}, // bomb 34
+ {6, 6, 0, 0}, // bomb 35
+ {6,11, 0, 0}, // bomb 36
+ {6,16, 0, 0}, // bomb 37
+ {6,21, 0, 0}, // bomb 38
+ {6,26, 0, 0}, // bomb 39
+ {6,31, 0, 0}, // bomb 40
+ {6,36, 0, 0}, // bomb 41
+ {6,41, 0, 0}, // bomb 42
+ {6,46, 0, 0}, // bomb 43
+ {6,51, 0, 0}, // bomb 44
+ {8, 1, 0, 0}, // bomb 45
+ {8, 6, 0, 0}, // bomb 46
+ {8,11, 0, 0}, // bomb 47
+ {8,16, 0, 0}, // bomb 48
+ {8,21, 0, 0}, // bomb 49
+ {8,26, 0, 0}, // bomb 50
+ {8,31, 0, 0}, // bomb 51
+ {8,36, 0, 0}, // bomb 52
+ {8,41, 0, 0}, // bomb 53
+ {8,46, 0, 0}, // bomb 54
+ {8,51, 0, 0}, // bomb 55
+//|  |  |  |__ random variables
+//|  |  |_____ ready to drop=0, in action=1
 //|  |________ column
 //|___________ row
 };
 
-int randvrb[5][1] = {
- {0}, // random variable 0
- {0}, // random variable 1
- {0}, // random variable 2
- {0}, // random variable 3
- {0}, // random variable 4
-};
-
+int b=0;
+int s=0;
 int main(int argc, char **argv)
 {
 
@@ -67,7 +163,6 @@ int main(int argc, char **argv)
     curs_set(0);
 
     screen = newwin(0, 0, 0, 0);
-
     clear();
     refresh();
     napms(1000);
@@ -160,7 +255,7 @@ srand(time(NULL));
 
   while(1)
   {
-    napms(55);
+    napms(20);
 //player tank----------------------------------------------------
      key=GetCh();
      oldrow=row;
@@ -174,13 +269,13 @@ srand(time(NULL));
      }
      jerase(oldrow,oldcol);
      plyr(row,col);
-  for( e=0; e<5; e++)
+  for( e=0; e<55; e++)
   {
     if(row==bmbpstn[e][ROW] && col==bmbpstn[e][COL])
        exit(0);
   }
 //player bullet--------------------------------------------------
-for(e=0; e<5; e++)
+for(e=0; e<55; e++)
 {
   if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
   {
@@ -212,7 +307,7 @@ if(row3<0)
   col3=col;
   o=1;
 }
-for(e=0; e<5; e++)
+for(e=0; e<55; e++)
 {
   if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
   {
@@ -304,81 +399,78 @@ return row;
 void invdrs(void)
 {
   int e;
-  int l=0;
-
-  for(e=0; e<5; e++)
-    eerase(e);
-
-  for(e=0; e<5; e++)
+  if((b++)%20==3)
   {
-    if(pstn[e][COL]==0 || l==1)
+    for(e=0; e<55; e++) eerase(e);
+    for(e=0; e<55; e++)
     {
-      pstn[e][ROW]++;
-      l=1;
-    }
-  }
-  for(e=0; e<5; e++)
-  {
-    if(pstn[e][COL]==0 || pstn[e][STATE]==1)
-    {
-      pstn[e][COL]++;
-      pstn[e][STATE]=1;
-    }
-  }
-  for(e=4; e>-1; e--)
-  {
-    if(pstn[e][COL]==99 || l==1)
-    {
-      pstn[e][ROW]++;
-      l=1;
-    }
-  }
 
-  for(e=0; e<5; e++)
-  {
-    if(pstn[e][COL]==99 || pstn[e][STATE]==0)
-    {
-      pstn[e][COL]--;
-      pstn[e][STATE]=0;
+      if(pstn[e][COL]==0 && pstn[e][LIFE]==1)
+      {
+        for(e=0; e<55; e++)
+        {
+          pstn[e][ROW]++;
+          pstn[e][M]=0;
+        }
+      }
     }
-
-  }
-  for(e=0; e<5; e++)
+    for(e=0; e<55; e++)
+    {
+      if(pstn[e][COL]==0 || pstn[e][STATE]==1 || pstn[e][M]==0)
+      {
+        pstn[e][COL]++;
+        pstn[e][STATE]=1;
+      }
+    }
+    for(e=0; e<55; e++)
+    {
+      if(pstn[e][COL]==99 && pstn[e][LIFE]==1)
+      {
+        for(e=0; e<55; e++)
+        {
+          pstn[e][ROW]++;
+          pstn[e][M]=1;
+        }
+      }
+    }
+    
+    for(e=0; e<55; e++)
+    {
+      if(pstn[e][COL]==99 || pstn[e][STATE]==0 || pstn[e][M]==1)
+      {
+        pstn[e][COL]--;
+        pstn[e][STATE]=0;
+      }
+    }
+  
+  for(e=0; e<55; e++)
   {
     if(pstn[e][LIFE]==1)
       enemy(e);
-  }
+  }}
 }
 void drpbmb(void)
 {
   int e;
 
-  for(e=0; e<5; e++)
-    berase(e);
-
-  for(e=0; e<5; e++)
+  for(e=0; e<55; e++)
   {
+    if(bmbpstn[e][ROW]!=pstn[e][ROW])
+      berase(e);
     if(bmbpstn[e][STATE]==0 && pstn[e][LIFE]==1)
     {
-      randvrb[e][0]=rand()%20;
+      bmbpstn[e][3]=rand()%100;
       bmbpstn[e][ROW]=pstn[e][ROW];
       bmbpstn[e][COL]=pstn[e][COL];
     }
-  }
-
-  for(e=0; e<5; e++)
-  {
-    if(randvrb[e][0]==0)
+    if(bmbpstn[e][3]==0)
       bmbpstn[e][STATE]=1;
-  }
-
-  for(e=0; e<5; e++)
-  {
-  if(bmbpstn[e][STATE]==1)
+    if(bmbpstn[e][STATE]==1)
     {
       bmbpstn[e][ROW]++;
       if(bmbpstn[e][ROW]>39)
         bmbpstn[e][STATE]=0;
+      if(bmbpstn[e][ROW]!=pstn[e][ROW])
       bmb(e);
     }
   }
