@@ -197,10 +197,14 @@ int main(int argc, char **argv)
     refresh();
     napms(1000);
 
+    int key;
     intro();
     del_msg();
     napms(1000);
-    spcInvdrs();
+    while(key!='c')
+    key=GetCh();
+    if(key=='c')
+      spcInvdrs();
 
     napms(1000);
 
@@ -262,19 +266,11 @@ void berase(int n)
 }
 void intro(void)
 {
-    mvaddch( 6, 1, 'S');
-    mvaddch( 8, 1, 'p');
-    mvaddch(10, 1, 'a');
-    mvaddch(12, 1, 'c');
-    mvaddch(14, 1, 'e');
-    mvaddch( 4, 3, 'i');
-    mvaddch( 6, 3, 'n');
-    mvaddch( 8, 3, 'v');
-    mvaddch(10, 3, 'a');
-    mvaddch(12, 3, 'd');
-    mvaddch(14, 3, 'e');
-    mvaddch(16, 3, 'r');
-    mvaddch(18, 3, 's');
+    mvaddstr(10, 30, "Space invaders");
+    mvaddstr(13, 30, "& = 30 points");
+    mvaddstr(16, 30, "$ = 20 points");
+    mvaddstr(19, 30, "@ = 10 points");
+    mvaddstr(21, 30, "press c to continue");
 }
 void del_msg(void)
 {
@@ -297,7 +293,7 @@ void spcInvdrs(void)
 
   while(1)
   {
-    napms(20);
+    napms(25);
 //score----------------------------------------------------------
     sprintf(score, "score:%04d",pts);
     mvwaddstr(screen, 39, 0, score);
@@ -316,17 +312,6 @@ void spcInvdrs(void)
         exit(0);
     }
 //player bullet--------------------------------------------------
-    for(e=0; e<55; e++)
-    {
-      if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
-      {
-        pstn[e][LIFE]=0;
-        row3=row;
-        col3=col;
-        o=1;
-      }
-    }
-
     if(key==' ' && row3==row)
     {
       col3=col;
@@ -352,15 +337,9 @@ void spcInvdrs(void)
     {
       if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
       {
-        for(f=0; f<11; f++)
-        {
-          if(e==f)
-            pts+=30;
-          if(e==(f+11) || e==(f+22))
-            pts+=20;
-          if(e==(f+33) || e==(f+44))
-            pts+=10;
-        }
+          if(pstn[e][APRNCE]=='&') pts+=30;
+          if(pstn[e][APRNCE]=='$') pts+=20;
+          if(pstn[e][APRNCE]=='@') pts+=10;
           pstn[e][LIFE]=0;
           jerase(row3,col3);
           row3=row;
@@ -397,6 +376,8 @@ void spcInvdrs(void)
     drpbmb();
 //shield---------------------------------------------------------
     mkshld();
+//mystery ship
+
 //---------------------------------------------------------------
   }
 }
