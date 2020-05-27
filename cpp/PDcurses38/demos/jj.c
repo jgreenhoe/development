@@ -19,6 +19,7 @@ void mkshld(void);
 void jerase(int row,int col);
 void plyr(int row, int col);
 
+
 CHAR GetCh (VOID);
 enum spaceships {ROW,COL,STATE,APRNCE,LIFE,M,MAX};
 
@@ -46,17 +47,17 @@ int pstn[55][7] = {
  {2,41, 1, '$', 1, 0, 8}, // spaceship 19
  {2,46, 1, '$', 1, 0, 8}, // spaceship 20
  {2,51, 1, '$', 1, 0, 8}, // spaceship 21
- {4, 1, 1, '%', 1, 0, 8}, // spaceship 22
- {4, 6, 1, '%', 1, 0, 8}, // spaceship 23
- {4,11, 1, '%', 1, 0, 8}, // spaceship 24
- {4,16, 1, '%', 1, 0, 8}, // spaceship 25
- {4,21, 1, '%', 1, 0, 8}, // spaceship 26
- {4,26, 1, '%', 1, 0, 8}, // spaceship 27
- {4,31, 1, '%', 1, 0, 8}, // spaceship 28
- {4,36, 1, '%', 1, 0, 8}, // spaceship 29
- {4,41, 1, '%', 1, 0, 8}, // spaceship 30
- {4,46, 1, '%', 1, 0, 8}, // spaceship 31
- {4,51, 1, '%', 1, 0, 8}, // spaceship 32
+ {4, 1, 1, '$', 1, 0, 8}, // spaceship 22
+ {4, 6, 1, '$', 1, 0, 8}, // spaceship 23
+ {4,11, 1, '$', 1, 0, 8}, // spaceship 24
+ {4,16, 1, '$', 1, 0, 8}, // spaceship 25
+ {4,21, 1, '$', 1, 0, 8}, // spaceship 26
+ {4,26, 1, '$', 1, 0, 8}, // spaceship 27
+ {4,31, 1, '$', 1, 0, 8}, // spaceship 28
+ {4,36, 1, '$', 1, 0, 8}, // spaceship 29
+ {4,41, 1, '$', 1, 0, 8}, // spaceship 30
+ {4,46, 1, '$', 1, 0, 8}, // spaceship 31
+ {4,51, 1, '$', 1, 0, 8}, // spaceship 32
  {6, 1, 1, '@', 1, 0, 8}, // spaceship 33
  {6, 6, 1, '@', 1, 0, 8}, // spaceship 34
  {6,11, 1, '@', 1, 0, 8}, // spaceship 35
@@ -68,17 +69,17 @@ int pstn[55][7] = {
  {6,41, 1, '@', 1, 0, 8}, // spaceship 41
  {6,46, 1, '@', 1, 0, 8}, // spaceship 42
  {6,51, 1, '@', 1, 0, 8}, // spaceship 43
- {8, 1, 1, '=', 1, 0, 8}, // spaceship 44
- {8, 6, 1, '=', 1, 0, 8}, // spaceship 45
- {8,11, 1, '=', 1, 0, 8}, // spaceship 46
- {8,16, 1, '=', 1, 0, 8}, // spaceship 47
- {8,21, 1, '=', 1, 0, 8}, // spaceship 48
- {8,26, 1, '=', 1, 0, 8}, // spaceship 49
- {8,31, 1, '=', 1, 0, 8}, // spaceship 50
- {8,36, 1, '=', 1, 0, 8}, // spaceship 51
- {8,41, 1, '=', 1, 0, 8}, // spaceship 52
- {8,46, 1, '=', 1, 0, 8}, // spaceship 53
- {8,51, 1, '=', 1, 0, 8}, // spaceship 54
+ {8, 1, 1, '@', 1, 0, 8}, // spaceship 44
+ {8, 6, 1, '@', 1, 0, 8}, // spaceship 45
+ {8,11, 1, '@', 1, 0, 8}, // spaceship 46
+ {8,16, 1, '@', 1, 0, 8}, // spaceship 47
+ {8,21, 1, '@', 1, 0, 8}, // spaceship 48
+ {8,26, 1, '@', 1, 0, 8}, // spaceship 49
+ {8,31, 1, '@', 1, 0, 8}, // spaceship 50
+ {8,36, 1, '@', 1, 0, 8}, // spaceship 51
+ {8,41, 1, '@', 1, 0, 8}, // spaceship 52
+ {8,46, 1, '@', 1, 0, 8}, // spaceship 53
+ {8,51, 1, '@', 1, 0, 8}, // spaceship 54
 //|  |  |   |   |  |  |_max row
 //|  |  |   |   |  |____m variable
 //|  |  |   |   |_______alive=1 dead=0
@@ -177,6 +178,7 @@ int spstn[][3] = {
 int b=0;
 int u=0;
 int e=0;
+int pts=0;
 int main(int argc, char **argv)
 {
 
@@ -228,7 +230,7 @@ void bmb(int n)
 
 void shld(int n)
 {
-    mvwaddch(screen, spstn[n][0], spstn[n][1], (chtype)'A');
+    mvwaddch(screen, spstn[n][0], spstn[n][1], (chtype)'O');
     wrefresh(screen);
 }
 
@@ -274,7 +276,6 @@ void intro(void)
     mvaddch(16, 3, 'r');
     mvaddch(18, 3, 's');
 }
-
 void del_msg(void)
 {
     refresh();
@@ -290,104 +291,115 @@ void spcInvdrs(void)
   int r=0;
   int o=1;
   int f=0;
+  char score[100];
 
-srand(time(NULL));
+  srand(time(NULL));
 
   while(1)
   {
     napms(20);
+//score----------------------------------------------------------
+    sprintf(score, "score:%04d",pts);
+    mvwaddstr(screen, 39, 0, score);
 //player tank----------------------------------------------------
-     key=GetCh();
-     oldrow=row;
-     oldcol=col;
-     switch(key)
-     {
-       case'd': col+=1; break;
-       case'a': col-=1; break;
-       case'x': exit(0);
-     }
-     jerase(oldrow,oldcol);
-     plyr(row,col);
-  for( e=0; e<55; e++)
-  {
-    if(row==bpstn[e][ROW] && col==bpstn[e][COL])
-       exit(0);
-  }
+    key=GetCh();
+    oldrow=row;
+    oldcol=col;
+    if(col<99 && key=='d') col++;
+    if(col>0 && key=='a') col--;
+    if(key=='x') exit(0);
+    jerase(oldrow,oldcol);
+    plyr(row,col);
+    for( e=0; e<55; e++)
+    {
+      if(row==bpstn[e][ROW] && col==bpstn[e][COL])
+        exit(0);
+    }
 //player bullet--------------------------------------------------
-for(e=0; e<55; e++)
-{
-  if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
-  {
-    pstn[e][LIFE]=0;
-    row3=row;
-    col3=col;
-    o=1;
-  }
-}
-
-if(key==' ' && row3==row)
-{
-  col3=col;
-  o=r;
-}
-if(o==r)
-{
-  oldrow3=row3;
-  oldcol3=col3;
-  row3--;
-  o=r;
-  key=0;
-  jerase(oldrow3,oldcol3);
-  blt(row3,col3);
-}
-if(row3<0)
-{
-  row3=row;
-  col3=col;
-  o=1;
-}
-for(e=0; e<55; e++)
-{
-  if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
-  {
-    pstn[e][LIFE]=0;
-    jerase(row3,col3);
-    row3=row;
-    col3=col;
-    o=1;
-    if(pstn[e][ROW]==pstn[e][MAX])
-      for(f=0; f<55; f++)
+    for(e=0; e<55; e++)
+    {
+      if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
       {
-        if(pstn[e][COL]==pstn[f][COL])
-        {
-          pstn[f][MAX]-=2;
-          if(pstn[f][MAX]==pstn[f][LIFE] && pstn[f][LIFE]==0)
-            pstn[f][MAX]-=2;
-        }
+        pstn[e][LIFE]=0;
+        row3=row;
+        col3=col;
+        o=1;
       }
-  }
-}
-for(e=0; e<128; e++)
-{
-  if(row3==spstn[e][ROW] && col3==spstn[e][COL] && spstn[e][STATE]==1)
-  {
-    spstn[e][STATE]=0;
-    jerase(row3,col3);
-    row3=row;
-    col3=col;
-    o=1;
-  }
-}
+    }
+
+    if(key==' ' && row3==row)
+    {
+      col3=col;
+      o=r;
+    }
+    if(o==r)
+    {
+      oldrow3=row3;
+      oldcol3=col3;
+      row3--;
+      o=r;
+      key=0;
+      jerase(oldrow3,oldcol3);
+      blt(row3,col3);
+    }
+    if(row3<0)
+    {
+      row3=row;
+      col3=col;
+      o=1;
+    }
+    for(e=0; e<55; e++)
+    {
+      if(row3==pstn[e][ROW] && col3==pstn[e][COL] && pstn[e][LIFE]==1)
+      {
+        for(f=0; f<11; f++)
+        {
+          if(e==f)
+            pts+=30;
+          if(e==(f+11) || e==(f+22))
+            pts+=20;
+          if(e==(f+33) || e==(f+44))
+            pts+=10;
+        }
+          pstn[e][LIFE]=0;
+          jerase(row3,col3);
+          row3=row;
+          col3=col;
+          o=1;
+          if(pstn[e][ROW]==pstn[e][MAX])
+            {
+            for(f=0; f<55; f++)
+            {
+              if(pstn[e][COL]==pstn[f][COL])
+              {
+                pstn[f][MAX]-=2;
+                if(pstn[f][MAX]==pstn[f][LIFE] && pstn[f][LIFE]==0)
+                  pstn[f][MAX]-=2;
+              }
+            }
+          }
+      }
+    }
+    for(e=0; e<128; e++)
+    {
+      if(row3==spstn[e][ROW] && col3==spstn[e][COL] && spstn[e][STATE]==1)
+      {
+        spstn[e][STATE]=0;
+        jerase(row3,col3);
+        row3=row;
+        col3=col;
+        o=1;
+      }
+    }
 //enemy----------------------------------------------------------
-invdrs();
+    invdrs();
 //enemy bomb-----------------------------------------------------
-drpbmb();
+    drpbmb();
 //shield---------------------------------------------------------
-mkshld();
+    mkshld();
 //---------------------------------------------------------------
   }
 }
-
 void plyrCntrl(void)
 {
   int key;
@@ -400,12 +412,12 @@ void plyrCntrl(void)
      key=GetCh();
      oldrow=row;
      oldcol=col;
-     switch(key)
-     {
-       case'd': col+=2; break;
-       case'a': col-=2; break;
-       case'x': exit(0);
-     }
+       switch(key)
+       {
+         case'd': col++; break;
+         case'a': col--; break;
+         case'x': exit(0);
+       }
      jerase(oldrow,oldcol);
      plyr(row,col);
   }
@@ -461,7 +473,7 @@ return row;
 
 void invdrs(void)
 {
-  if((b++)%30==1)
+  if((b++)%20==1)
   {
     for(e=0; e<55; e++)
       eerase(e);
@@ -531,12 +543,12 @@ void drpbmb(void)
         bpstn[e][ROW]=pstn[e][MAX]+1;
         bpstn[e][COL]=pstn[e][COL];
       }
-      if(bpstn[e][STATE]==0 && bpstn[e][3]==10)
+      if(bpstn[e][STATE]==0 && bpstn[e][3]==1 && pstn[e][LIFE]==1)
         bpstn[e][STATE]=1;
       if(pstn[e][ROW]==pstn[e][MAX])
       {
         bpstn[e][ROW]++;
-        if(bpstn[e][ROW]>39)
+        if(bpstn[e][ROW]>39 && pstn[e][LIFE]==1)
           bpstn[e][STATE]=0;
         if(bpstn[e][STATE]==1 && bpstn[e][ROW]>pstn[e][MAX])
           bmb(e);
