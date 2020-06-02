@@ -177,6 +177,7 @@ int spstn[][3] = {
 };
 int b=0;
 int u=0;
+int w=0;
 int e=0;
 int pts=0;
 int main(int argc, char **argv)
@@ -244,6 +245,12 @@ void enemy(int n)
     wrefresh(screen);
 }
 
+void mstryshp(int row, int col)
+{
+    mvwaddstr(screen, row, col, "123");
+    wrefresh(screen);
+}
+
 void jerase(int row, int col)
 {
     mvwaddch(screen, row, col, (chtype) ' ');
@@ -279,14 +286,19 @@ void del_msg(void)
 
 void spcInvdrs(void)
 {
+  int m;
   int row=39, col=50;
-  int row3=row, col3=col;
   int oldrow=row, oldcol=col;
+  int row2=0, col2=0;
+  int oldrow2=row2, oldcol2=col2;
+  int row3=row, col3=col;
   int oldrow3=row3, oldcol3=col3;
   int key;
   int r=0;
   int o=1;
   int f=0;
+  int l=1;
+
   char score[100];
 
   srand(time(NULL));
@@ -298,13 +310,13 @@ void spcInvdrs(void)
     sprintf(score, "score:%04d",pts);
     mvwaddstr(screen, 39, 0, score);
 //player tank----------------------------------------------------
-    key=GetCh();
     oldrow=row;
     oldcol=col;
+    jerase(oldrow,oldcol);
+    key=GetCh();
     if(col<99 && key=='d') col++;
     if(col>0 && key=='a') col--;
     if(key=='x') exit(0);
-    jerase(oldrow,oldcol);
     plyr(row,col);
     for( e=0; e<55; e++)
     {
@@ -359,6 +371,14 @@ void spcInvdrs(void)
           }
       }
     }
+    for(m=row2; m<=row2+3; m++)
+    {
+      if(row3==m && col3==col2 && l==1)
+      {
+        pts+=500;
+        l=0;
+      }
+    }
     for(e=0; e<128; e++)
     {
       if(row3==spstn[e][ROW] && col3==spstn[e][COL] && spstn[e][STATE]==1)
@@ -376,8 +396,15 @@ void spcInvdrs(void)
     drpbmb();
 //shield---------------------------------------------------------
     mkshld();
-//mystery ship
-
+//mystery ship---------------------------------------------------
+  oldrow2=row2;
+  oldcol2=col2;
+  jerase(oldrow2, oldcol2);
+    mstryshp(row2, col2);
+  if(pstn[0][ROW]>0 && (w++)%10==1 && l==1)
+  {
+    col2++;
+  }
 //---------------------------------------------------------------
   }
 }
@@ -464,8 +491,8 @@ void invdrs(void)
       {
         for(e=0; e<55; e++)
         {
-          pstn[e][MAX]++;
-          pstn[e][ROW]++;
+          pstn[e][MAX]+=2;
+          pstn[e][ROW]+=2;
           if(bpstn[e][STATE]==0)
             bpstn[e][ROW]++;
           pstn[e][M]=1;
@@ -486,8 +513,8 @@ void invdrs(void)
       {
         for(e=0; e<55; e++)
         {
-          pstn[e][MAX]++;
-          pstn[e][ROW]++;
+          pstn[e][MAX]+=2;
+          pstn[e][ROW]+=2;
           if(bpstn[e][STATE]==0)
             bpstn[e][ROW]++;
           pstn[e][M]=0;
