@@ -2,8 +2,9 @@
 #include <windows.h>
 #include <math.h>
 #include <time.h>
-void intro(void);
-void del_msg(void);
+void intro1(void);
+void intro2(void);
+void intro3(void);
 void plyrCntrl(void);
 void path(void);
 void arc(void);
@@ -179,6 +180,7 @@ int b=0;
 int u=0;
 int w=0;
 int e=0;
+int g=0;
 int pts=0;
 int main(int argc, char **argv)
 {
@@ -196,24 +198,45 @@ int main(int argc, char **argv)
     screen = newwin(0, 0, 0, 0);
     clear();
     refresh();
-    napms(1000);
 
     int key;
-    intro();
-    del_msg();
-    napms(1000);
+// intro 1
+    intro1();
+    refresh();
+    erase();
+// intro 2
     while(key!='c')
-    key=GetCh();
+      key=GetCh();
+    if(key=='c')
+    {
+      intro2();
+      refresh();
+      erase();
+      key=b;
+    }
+    while(key!='c')
+      key=GetCh();
+    if(key=='c')
+      key=b;
+// intro 3
+    while(key!='c')
+      key=GetCh();
+    if(key=='c')
+    {
+      intro3();
+      refresh();
+      erase();
+      key=b;
+    }
+    while(key!='c')
+      key=GetCh();
+    if(key=='c')
+      key=b;
+// space invaders
+    while(key!='c')
+      key=GetCh();
     if(key=='c')
       spcInvdrs();
-
-    napms(1000);
-
-    napms(1000);
-
-    napms(3000);
-    return 0;
-
 }
 void plyr(int row, int col)
 {
@@ -247,7 +270,7 @@ void enemy(int n)
 
 void mstryshp(int row, int col)
 {
-    mvwaddstr(screen, row, col, "123");
+    mvwaddstr(screen, row, col, "<==>");
     wrefresh(screen);
 }
 
@@ -256,6 +279,12 @@ void jerase(int row, int col)
     mvwaddch(screen, row, col, (chtype) ' ');
     wrefresh(screen);
 }
+void merase(int row, int col)
+{
+    mvwaddstr(screen, row, col, "    ");
+    wrefresh(screen);
+}
+
 void eerase(int n)
 {
     mvwaddch(screen, pstn[n][0], pstn[n][1], (chtype) ' ');
@@ -271,25 +300,37 @@ void berase(int n)
     mvwaddch(screen, bpstn[n][0], bpstn[n][1], (chtype) ' ');
     wrefresh(screen);
 }
-void intro(void)
+void intro1(void)
 {
-    mvaddstr(10, 30, "Space invaders");
-    mvaddstr(13, 30, "& = 30 points");
-    mvaddstr(16, 30, "$ = 20 points");
-    mvaddstr(19, 30, "@ = 10 points");
-    mvaddstr(21, 30, "press c to continue");
+    mvaddstr(10, 35, "Space invaders");
+    mvaddstr(13, 25, "Shoot down all the alien spaceships to win (&, $, @),");
+    mvaddstr(16, 25, "But be careful not to get hit by any of their deadly bombs (#)!");
+    mvaddstr(19, 25, "Also, destroy the mystery ship for extra points (<==>)!");
+    mvaddstr(21, 25, "press c to continue");
 }
-void del_msg(void)
+void intro2(void)
 {
-    refresh();
+    mvaddstr(10, 35, "Controls");
+    mvaddstr(13, 35, "a = move left");
+    mvaddstr(16, 35, "d = move right");
+    mvaddstr(19, 35, "spacebar = fire missiles");
+    mvaddstr(21, 35, "press c to continue");
+}
+void intro3(void)
+{
+    mvaddstr(10, 35, "Types of spaceships");
+    mvaddstr(13, 35, "& = 30 points");
+    mvaddstr(16, 35, "$ = 20 points");
+    mvaddstr(19, 35, "@ = 10 points");
+    mvaddstr(22, 35, "<==> =  ???");
+    mvaddstr(24, 35, "press c to begin!");
 }
 
 void spcInvdrs(void)
 {
-  int m;
   int row=39, col=50;
   int oldrow=row, oldcol=col;
-  int row2=0, col2=0;
+  int row2=0, col2=-3;
   int oldrow2=row2, oldcol2=col2;
   int row3=row, col3=col;
   int oldrow3=row3, oldcol3=col3;
@@ -305,7 +346,7 @@ void spcInvdrs(void)
 
   while(1)
   {
-    napms(25);
+    napms(20);
 //score----------------------------------------------------------
     sprintf(score, "score:%04d",pts);
     mvwaddstr(screen, 39, 0, score);
@@ -371,14 +412,15 @@ void spcInvdrs(void)
           }
       }
     }
-    for(m=row2; m<=row2+3; m++)
-    {
-      if(row3==m && col3==col2 && l==1)
+      int j;
+      for(j=0; j<=3; j++)
+      {
+      if((row3==row2 && col3==col2+j) && l==1)
       {
         pts+=500;
         l=0;
       }
-    }
+      }
     for(e=0; e<128; e++)
     {
       if(row3==spstn[e][ROW] && col3==spstn[e][COL] && spstn[e][STATE]==1)
@@ -399,12 +441,25 @@ void spcInvdrs(void)
 //mystery ship---------------------------------------------------
   oldrow2=row2;
   oldcol2=col2;
-  jerase(oldrow2, oldcol2);
-    mstryshp(row2, col2);
-  if(pstn[0][ROW]>0 && (w++)%10==1 && l==1)
+  int v=0;
+  merase(oldrow2, oldcol2);
+  if(col2>99)
   {
-    col2++;
+    col2=-3;
+    l=0;
+    v=0;
   }
+  for(g=0;g<=36; g+=4)
+  {
+    if(g==pstn[0][ROW]+2)
+      v=1;
+    if(v==1 && (w++)%15==1 && l==1)
+      col2++;
+    if(g==pstn[0][ROW])
+      l=1;
+  }
+  if(l==1)
+    mstryshp(row2, col2);
 //---------------------------------------------------------------
   }
 }
@@ -534,6 +589,14 @@ void invdrs(void)
   {
     if(pstn[e][LIFE]==1)
       enemy(e);
+  }
+  for(e=0; e<55; e++)
+  {
+    if(pstn[e][ROW]==39 && pstn[e][LIFE]==1)
+    {
+    mvaddstr(20, 46, "You lose!");
+    exit(0);
+    }
   }
 }
 
