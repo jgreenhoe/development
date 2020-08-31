@@ -5,6 +5,8 @@
 void intro1(void);
 void intro2(void);
 void intro3(void);
+void winOutro(void);
+void loseOutro(void);
 void plyrCntrl(void);
 void path(void);
 void arc(void);
@@ -180,6 +182,7 @@ int b=0;
 int u=0;
 int w=0;
 int e=0;
+int f=0;
 int g=0;
 int pts=0;
 int main(int argc, char **argv)
@@ -191,8 +194,6 @@ int main(int argc, char **argv)
     nonl();
     refresh();
 
-    if (has_colors())
-        start_color();
     curs_set(0);
 
     screen = newwin(0, 0, 0, 0);
@@ -303,10 +304,12 @@ void berase(int n)
 void intro1(void)
 {
     mvaddstr(10, 35, "Space invaders");
-    mvaddstr(13, 25, "Shoot down all the alien spaceships to win (&, $, @),");
+    mvaddstr(13, 25, "Shoot down all the alien invaders (&, $, @) to win,");
     mvaddstr(16, 25, "But be careful not to get hit by any of their deadly bombs (#)!");
-    mvaddstr(19, 25, "Also, destroy the mystery ship for extra points (<==>)!");
-    mvaddstr(21, 25, "press c to continue");
+    mvaddstr(19, 25, "Destroy the mystery ship (<==>) for extra points!");
+    mvaddstr(22, 25, "The shields (o) appear in clusters, and protect you from bombs.");
+    mvaddstr(25, 25, "They are destroyed when hit by bombs or missiles.");
+    mvaddstr(27, 25, "press c to continue");
 }
 void intro2(void)
 {
@@ -314,11 +317,12 @@ void intro2(void)
     mvaddstr(13, 35, "a = move left");
     mvaddstr(16, 35, "d = move right");
     mvaddstr(19, 35, "spacebar = fire missiles");
-    mvaddstr(21, 35, "press c to continue");
+    mvaddstr(22, 35, "x = quit game");
+    mvaddstr(24, 35, "press c to continue");
 }
 void intro3(void)
 {
-    mvaddstr(10, 35, "Types of spaceships");
+    mvaddstr(10, 35, "Types of invaders");
     mvaddstr(13, 35, "& = 30 points");
     mvaddstr(16, 35, "$ = 20 points");
     mvaddstr(19, 35, "@ = 10 points");
@@ -326,11 +330,28 @@ void intro3(void)
     mvaddstr(24, 35, "press c to begin!");
 }
 
+  char score[100];
+
+void winOutro(void)
+{
+    mvaddstr(22, 35, "you win!");
+    sprintf(score, "score:%04d",pts);
+    mvaddstr(24, 35, score);
+    mvaddstr(26, 35, "press c to continue");
+}
+void loseOutro(void)
+{
+    mvaddstr(22, 35, "you lose!");
+    sprintf(score, "score:%04d",pts);
+    mvaddstr( 24, 35, score);
+    mvaddstr(26, 35, "press c to continue");
+}
+
 void spcInvdrs(void)
 {
   int row=39, col=50;
   int oldrow=row, oldcol=col;
-  int row2=0, col2=-3;
+  int row2=0, col2=-5;
   int oldrow2=row2, oldcol2=col2;
   int row3=row, col3=col;
   int oldrow3=row3, oldcol3=col3;
@@ -340,13 +361,13 @@ void spcInvdrs(void)
   int f=0;
   int l=1;
 
-  char score[100];
+
 
   srand(time(NULL));
 
   while(1)
   {
-    napms(20);
+    napms(25);
 //score----------------------------------------------------------
     sprintf(score, "score:%04d",pts);
     mvwaddstr(screen, 39, 0, score);
@@ -359,10 +380,18 @@ void spcInvdrs(void)
     if(col>0 && key=='a') col--;
     if(key=='x') exit(0);
     plyr(row,col);
-    for( e=0; e<55; e++)
+    for(e=0; e<55; e++)
     {
       if(row==bpstn[e][ROW] && col==bpstn[e][COL])
-        exit(0);
+      {
+        loseOutro();
+        refresh();
+        erase();
+        while(key!='c')
+          key=GetCh();
+        if(key=='c')
+          exit(0);
+      }
     }
 //player bullet--------------------------------------------------
     if(key==' ' && row3==row)
@@ -415,11 +444,13 @@ void spcInvdrs(void)
       int j;
       for(j=0; j<=3; j++)
       {
-      if((row3==row2 && col3==col2+j) && l==1)
-      {
-        pts+=500;
-        l=0;
-      }
+        if((row3==row2 && col3==col2+j) && l==1)
+        {
+          pts+=500;
+          l=0;
+          merase(row2, col2);
+          col2=-5;
+        }
       }
     for(e=0; e<128; e++)
     {
@@ -445,7 +476,9 @@ void spcInvdrs(void)
   merase(oldrow2, oldcol2);
   if(col2>99)
   {
-    col2=-3;
+    merase(row2, col2);
+    col2=-5;
+    row2=0;
     l=0;
     v=0;
   }
@@ -592,10 +625,40 @@ void invdrs(void)
   }
   for(e=0; e<55; e++)
   {
-    if(pstn[e][ROW]==39 && pstn[e][LIFE]==1)
+    for(f=0; f<128; f++)
     {
-    mvaddstr(20, 46, "You lose!");
-    exit(0);
+      if(pstn[e][ROW]>=spstn[f][ROW] && pstn[e][COL]==spstn[f][COL] && spstn[f][2]==1 && pstn[e][LIFE]==1)
+      {
+        spstn[f][2]=0;
+        serase(f);
+      }
+    }
+  }
+int key;
+int h=0;
+  for(e=0; e<55; e++)
+  {
+    if((pstn[e][ROW]>39 && pstn[e][LIFE]==1))
+    {
+      loseOutro();
+      refresh();
+      erase();
+      while(key!='c')
+        key=GetCh();
+      if(key=='c')
+        exit(0);
+    }
+    if(pstn[e][LIFE]==0)
+      h++;
+    if(h==55)
+    {
+      winOutro();
+      refresh();
+      erase();
+      while(key!='c')
+        key=GetCh();
+      if(key=='c')
+        exit(0);
     }
   }
 }
