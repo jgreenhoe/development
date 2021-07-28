@@ -1,8 +1,7 @@
 #============================================================================
-# Daniel J. Greenhoe
 # R script file
 # setwd("c:/jj/stats/");
-# source("dice.R");
+# source("mmp.R");
 #============================================================================
 #---------------------------------------
 # install packages (perform once)
@@ -26,9 +25,22 @@
  Open = x$Open;
  Close = x$Close;
  Date = x$Date;
+ N = length(Close)
+ Time = c(0:(N-1))
+ a = 0;
+ Approx = 20;
  #plot( bins,Red, col="red", type='o' );
  #lines( bins,Blue, col="blue", type='o' );
- hist(Close)
+ X = fft(Close)
+ #hist(Close)
+Approx = 0
+ for(i in c(1:500)){
+   a = (1/N)*(abs(X[i])*cos(2*pi*(i-1)*Time/N))
+#   a = sqrt((Re(X[i])*cos(2*pi*(i-1)*Time/N)/N)^2 + (Im(X[i])*sin(2*pi*(i-1)*Time/N)/N)^2)
+  Approx = Approx + a;
+ }
+ plot(Close, type = 'l', col = 'blue')
+ lines(Approx, type = 'l', col = 'red')
 #---------------------------------------
 # plot data
 #---------------------------------------
