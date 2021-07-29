@@ -1,6 +1,6 @@
 #include "main.h"
 #include <windows.h>
-#include <ncurses.h>
+//#include <ncurses.h>
 #define NROWS 35
 #define NCOLS 95
 CHAR GetCh (VOID);

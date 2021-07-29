@@ -9,10 +9,6 @@ int main(void);
 int key;
 int main(void)
 {
-  mainMenu();
-}
-void mainMenu(void)
-{
   printf("please choose a game\n");
   printf("press 1 for secret number\n");
   printf("press 2 for blackjack\n");

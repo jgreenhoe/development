@@ -28,19 +28,17 @@
  N = length(Close)
  Time = c(0:(N-1))
  a = 0;
- Approx = 20;
+ Approx = 0;
  #plot( bins,Red, col="red", type='o' );
  #lines( bins,Blue, col="blue", type='o' );
  X = fft(Close)
  #hist(Close)
-Approx = 0
- for(i in c(1:500)){
-   a = (1/N)*(abs(X[i])*cos(2*pi*(i-1)*Time/N))
-#   a = sqrt((Re(X[i])*cos(2*pi*(i-1)*Time/N)/N)^2 + (Im(X[i])*sin(2*pi*(i-1)*Time/N)/N)^2)
+ for(i in c(1:10)){
+   a = Re(X[i])*cos(2*pi*(i-1)*Time/N)/N - Im(X[i])*sin(2*pi*(i-1)*Time/N)/N
   Approx = Approx + a;
  }
- plot(Close, type = 'l', col = 'blue')
- lines(Approx, type = 'l', col = 'red')
+ plot(Time, Close, type = 'l', col = 'blue', lwd=3)
+ lines(Time, Approx, type = 'l', col = 'red')
 #---------------------------------------
 # plot data
 #---------------------------------------
